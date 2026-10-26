@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>파란 사과 3D · AR 보기</title>
+  <script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
+  <style>
+    :root { color-scheme: light; font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+    * { box-sizing: border-box; }
+    body { margin: 0; background: #f3f6fa; color: #172033; }
+    main { width: min(960px, 100% - 32px); margin: 0 auto; padding: 28px 0 40px; }
+    header { margin-bottom: 18px; }
+    h1 { font-size: clamp(1.5rem, 4vw, 2.2rem); margin: 0 0 8px; }
+    p { line-height: 1.6; color: #566176; }
+    .viewer { height: min(68vh, 620px); min-height: 360px; overflow: hidden; border: 1px solid #d9e1ec; border-radius: 22px; background: radial-gradient(circle at 50% 42%, #fff 0%, #edf3fa 70%); box-shadow: 0 12px 32px #14213d12; }
+    model-viewer { width: 100%; height: 100%; --poster-color: transparent; }
+    .actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 16px; }
+    button { border: 0; border-radius: 12px; padding: 13px 18px; font-size: 1rem; font-weight: 650; cursor: pointer; }
+    .primary { background: #1769e0; color: white; }
+    .secondary { background: white; color: #172033; border: 1px solid #d5deea; }
+    .hint { margin-top: 18px; padding: 14px 16px; border-radius: 14px; background: #e8f2ff; color: #29466d; font-size: .95rem; }
+    footer { font-size: .85rem; color: #778196; margin-top: 16px; }
+  </style>
+</head>
+<body>
+  <main>
+    <header>
+      <h1>🫐 파란 사과 3D 모델</h1>
+      <p>마우스나 손가락으로 돌려 보고, 지원되는 휴대폰에서는 AR로 공간에 배치해 보세요.</p>
+    </header>
+    <section class="viewer" aria-label="3D 모델 뷰어">
+      <model-viewer
+        id="apple"
+        src="./Meshy_AI_Blueberry_Apple_1021065456_texture.glb"
+        alt="파란 사과 3D 모델"
+        camera-controls
+        auto-rotate
+        rotation-per-second="20deg"
+        shadow-intensity="0.8"
+        exposure="1"
+        environment-image="neutral"
+        ar
+        ar-modes="webxr scene-viewer quick-look"
+        ar-scale="auto"
+        interaction-prompt="auto">
+        <button slot="ar-button" class="primary" style="position:absolute;bottom:16px;left:50%;transform:translateX(-50%);white-space:nowrap;">
+          AR로 내 공간에 놓기
+        </button>
+        <div slot="progress-bar" style="height:4px;background:#1769e0;"></div>
+      </model-viewer>
+    </section>
+    <div class="actions">
+      <button class="primary" id="ar-fallback">AR로 보기</button>
+      <button class="secondary" id="reset">보기 초기화</button>
+    </div>
+    <div class="hint">
+      <strong>사용 방법</strong><br>
+      • 드래그: 모델 회전 · 휠/핀치: 확대 및 축소<br>
+      • AR 버튼: 지원되는 모바일 기기에서 카메라로 실제 공간에 배치<br>
+      • AR은 HTTPS로 게시된 페이지와 호환되는 기기가 필요할 수 있습니다.
+    </div>
+    <footer>3D 파일: Meshy_AI_Blueberry_Apple_1021065456_texture.glb</footer>
+  </main>
+  <script>
+    const viewer = document.querySelector('#apple');
+    document.querySelector('#ar-fallback').addEventListener('click', async () => {
+      if (viewer.canActivateAR) {
+        try { await viewer.activateAR(); }
+        catch (e) { alert('이 기기나 브라우저에서는 AR을 사용할 수 없습니다. 3D 보기로 이용해 주세요.'); }
+      } else {
+        alert('이 기기나 브라우저에서는 AR을 사용할 수 없습니다. 휴대폰에서 HTTPS 페이지를 열어 보세요.');
+      }
+    });
+    document.querySelector('#reset').addEventListener('click', () => {
+      viewer.cameraOrbit = '0deg 75deg 2.5m';
+      viewer.fieldOfView = 'auto';
+    });
+  </script>
+</body>
+</html>
